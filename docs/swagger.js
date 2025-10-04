@@ -1,4 +1,5 @@
 const swaggerJsdoc = require("swagger-jsdoc");
+const PUBLIC_URL = process.env.PUBLIC_URL;
 
 /**
  * API Config Info
