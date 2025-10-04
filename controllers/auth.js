@@ -37,9 +37,25 @@ const registerCtrl = async (req,res) =>{
 const loginCtrl = async (req,res) =>{
     try {
       req = matchedData(req);
-      const user = await usersModel.findOne({email:req.email});
+      
+      // Log para debugging
+      console.log("🔍 Buscando usuario con email:", req.email);
+      
+      // Mejorar la consulta para asegurar que busque por email exacto
+      const user = await usersModel.findOne({
+        where: { email: req.email }
+      });
+      
+      // Log del resultado
+      console.log("👤 Usuario encontrado:", user ? { id: user.id, email: user.email, name: user.name } : "No encontrado");
       
       if(!user){
+        handleHttpError(res,"USER_NOT_EXISTS",404);
+        return
+      }
+
+      // Verificar que el email coincida exactamente (doble verificación)
+      if(user.email !== req.email){
         handleHttpError(res,"USER_NOT_EXISTS",404);
         return
       }
