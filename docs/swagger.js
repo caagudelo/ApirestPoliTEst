@@ -12,9 +12,16 @@ const swaggerDefinition = {
   info: {
     title: "Documentacion de mi API Trabajo poli",
     version: "1.0.0",
+    description: "API REST para proyecto Arquitectura poli",
     contact: {
-      email: "andres18160@gmail.com"
-  }
+      name: "Camilo Andres Agudelo",
+      email: "andres18160@gmail.com",
+      url: "www.cagudelo.com" // Tu URL personal de GitHub
+    },
+    license: {
+      name: "MIT",
+      url: "https://opensource.org/licenses/MIT"
+    }
   },
   servers: [
     {
