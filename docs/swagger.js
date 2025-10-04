@@ -1,4 +1,6 @@
 const swaggerJsdoc = require("swagger-jsdoc");
+const fs = require("fs");
+const path = require("path");
 const PUBLIC_URL = process.env.PUBLIC_URL;
 
 /**
@@ -116,11 +118,33 @@ const swaggerDefinition = {
 };
 
 /**
+ * Función para obtener solo las rutas activas
+ */
+const getActiveRoutes = () => {
+  const PATH_ROUTES = path.join(__dirname, "../routes");
+  const files = fs.readdirSync(PATH_ROUTES);
+  
+  const removeExtension = (fileName) => {
+    return fileName.split('.').shift();
+  };
+  
+  // Lista de rutas desactivadas (debe coincidir con routes/index.js)
+  const DISABLED_ROUTES = ['tracks', 'storage'];
+  
+  return files
+    .filter(file => {
+      const name = removeExtension(file);
+      return name !== 'index' && !DISABLED_ROUTES.includes(name);
+    })
+    .map(file => `./routes/${file}`);
+};
+
+/**
  * Opciones
  */
 const options = {
   swaggerDefinition,
-  apis: ["./routes/*.js"],
+  apis: getActiveRoutes(), // Solo rutas activas dinámicamente
 };
 
 const openApiConfigration = swaggerJsdoc(options);
