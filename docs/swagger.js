@@ -59,6 +59,70 @@ const swaggerDefinition = {
           },
         },
       },
+      // Schemas de pacientes
+      paciente: {
+        type: "object",
+        required: ["id", "nombre"],
+        properties: {
+          id: {
+            type: "string",
+            example: "12345"
+          },
+          nombre: {
+            type: "string",
+            example: "Carlos Gómez"
+          },
+          telefono: {
+            type: "string",
+            example: "3001234567"
+          },
+          email: {
+            type: "string",
+            example: "carlos@email.com"
+          },
+          fecha_nacimiento: {
+            type: "string",
+            format: "date",
+            example: "1990-05-15"
+          },
+          direccion: {
+            type: "string",
+            example: "Calle 123 #45-67"
+          }
+        }
+      },
+      historiaClinica: {
+        type: "object",
+        required: ["paciente_id", "tipo_registro", "descripcion"],
+        properties: {
+          paciente_id: {
+            type: "string",
+            example: "12345"
+          },
+          tipo_registro: {
+            type: "string",
+            enum: ["diagnostico", "medicamento", "procedimiento", "nota"],
+            example: "diagnostico"
+          },
+          descripcion: {
+            type: "string",
+            example: "Hipertensión controlada"
+          },
+          fecha: {
+            type: "string",
+            format: "date",
+            example: "2025-09-22"
+          },
+          medico: {
+            type: "string",
+            example: "Dr. García"
+          },
+          observaciones: {
+            type: "string",
+            example: "Paciente responde bien al tratamiento"
+          }
+        }
+      },
       // Schemas desactivados temporalmente (tracks y storage)
       // track: {
       //   type: "object",

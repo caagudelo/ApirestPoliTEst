@@ -188,6 +188,64 @@ END //
 DELIMITER ;
 
 -- =====================================================
+-- TABLA: PACIENTES (Sistema de Pacientes)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS `pacientes` (
+    `id` VARCHAR(50) NOT NULL COMMENT 'ID único del paciente',
+    `nombre` VARCHAR(100) NOT NULL COMMENT 'Nombre completo del paciente',
+    `fecha_nacimiento` DATE NULL COMMENT 'Fecha de nacimiento del paciente',
+    `telefono` VARCHAR(15) NULL COMMENT 'Número de teléfono del paciente',
+    `email` VARCHAR(100) NULL COMMENT 'Email del paciente',
+    `direccion` TEXT NULL COMMENT 'Dirección del paciente',
+    `activo` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Estado del paciente (activo/inactivo)',
+    `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización',
+    PRIMARY KEY (`id`),
+    INDEX `idx_pacientes_nombre` (`nombre`),
+    INDEX `idx_pacientes_activo` (`activo`),
+    INDEX `idx_pacientes_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla de pacientes del sistema';
+
+-- =====================================================
+-- TABLA: HISTORIA_CLINICA (Historia Clínica de Pacientes)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS `historia_clinica` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `paciente_id` VARCHAR(50) NOT NULL COMMENT 'ID del paciente',
+    `tipo_registro` ENUM('diagnostico', 'medicamento', 'procedimiento', 'nota') NOT NULL COMMENT 'Tipo de registro médico',
+    `descripcion` TEXT NOT NULL COMMENT 'Descripción del diagnóstico, medicamento o procedimiento',
+    `fecha` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha del registro',
+    `medico` VARCHAR(100) NULL COMMENT 'Nombre del médico que realizó el registro',
+    `observaciones` TEXT NULL COMMENT 'Observaciones adicionales',
+    `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación',
+    `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización',
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`paciente_id`) REFERENCES `pacientes`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX `idx_historia_paciente` (`paciente_id`),
+    INDEX `idx_historia_tipo` (`tipo_registro`),
+    INDEX `idx_historia_fecha` (`fecha`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Historia clínica de los pacientes';
+
+-- =====================================================
+-- DATOS DE EJEMPLO PARA PACIENTES
+-- =====================================================
+INSERT INTO `pacientes` (`id`, `nombre`, `fecha_nacimiento`, `telefono`, `email`, `direccion`) VALUES 
+('12345', 'Carlos Gómez', '1985-03-15', '3001234567', 'carlos.gomez@email.com', 'Calle 123 #45-67, Bogotá'),
+('67890', 'María Rodríguez', '1990-07-22', '3109876543', 'maria.rodriguez@email.com', 'Carrera 45 #78-90, Medellín'),
+('11111', 'Ana García', '1978-11-08', '3155555555', 'ana.garcia@email.com', 'Avenida 5 #12-34, Cali');
+
+-- =====================================================
+-- DATOS DE EJEMPLO PARA HISTORIA CLÍNICA
+-- =====================================================
+INSERT INTO `historia_clinica` (`paciente_id`, `tipo_registro`, `descripcion`, `fecha`, `medico`, `observaciones`) VALUES 
+('12345', 'diagnostico', 'Gripe', '2025-09-15', 'Dr. García', 'Paciente con síntomas leves'),
+('12345', 'medicamento', 'Paracetamol', '2025-09-15', 'Dr. García', '500mg cada 8 horas por 5 días'),
+('12345', 'diagnostico', 'Hipertensión controlada', '2025-09-22', 'Dr. López', 'Presión arterial estable'),
+('12345', 'medicamento', 'Losartán', '2025-09-22', 'Dr. López', '50mg diarios'),
+('67890', 'diagnostico', 'Migraña', '2025-09-20', 'Dr. Martínez', 'Episodios ocasionales'),
+('67890', 'medicamento', 'Ibuprofeno', '2025-09-20', 'Dr. Martínez', '400mg cuando sea necesario');
+
+-- =====================================================
 -- COMENTARIOS FINALES
 -- =====================================================
 

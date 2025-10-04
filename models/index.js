@@ -7,6 +7,8 @@ const models ={
     tracksModel: require(`${pathModels}/tracks`),
     storageModel: require(`${pathModels}/storage`),
     citasModel: require(`${pathModels}/citas`),
+    pacientesModel: require(`${pathModels}/pacientes`),
+    historiaClinicaModel: require(`${pathModels}/historiaClinica`),
 }
 
 module.exports = models
