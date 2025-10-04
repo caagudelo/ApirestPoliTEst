@@ -7,12 +7,15 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerDefinition = {
   openapi: "3.0.0",
   info: {
-    title: "Documentacion de mi API Node REST",
+    title: "Documentacion de mi API Trabajo poli",
     version: "1.0.0",
+    contact: {
+      email: "andres18160@gmail.com"
+  }
   },
   servers: [
     {
-      url: `http://localhost:${process.env.PORT}/api`,
+      url: `${PUBLIC_URL}/api`,
     }
   ],
   components: {
