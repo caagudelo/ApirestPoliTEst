@@ -16,7 +16,7 @@ const swaggerDefinition = {
     contact: {
       name: "Camilo Andres Agudelo",
       email: "andres18160@gmail.com",
-      url: "www.cagudelo.com" // Tu URL personal de GitHub
+      url: "https://www.cagudelo.com" // Tu URL personal
     },
     license: {
       name: "MIT",
@@ -25,7 +25,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `${PUBLIC_URL}/api`,
+      url: `${PUBLIC_URL || 'http://localhost:3000'}/api`,
     }
   ],
   components: {
