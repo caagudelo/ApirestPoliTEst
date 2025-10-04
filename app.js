@@ -36,6 +36,16 @@ app.use('/documentacion',swaggerUI.serve,swaggerUI.setup(openApiConfigration))
 //TODO localhost/api/___
 app.use("/api",require("./routes"));//TODO hace referencia al index.js de la carpeta routes
 
+// Middleware de manejo de errores global
+app.use((error, req, res, next) => {
+    console.log("🚨 Error global capturado:", error.message);
+    if(res.headersSent){
+        console.log("⚠️ Respuesta ya enviada, cerrando conexión");
+        return next(error);
+    }
+    res.status(500).json({error: "Error interno del servidor"});
+});
+
 app.listen(port, () =>{
     console.log('Tu app esta lista por http://localhost:'+port)
 });

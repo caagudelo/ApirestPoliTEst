@@ -86,14 +86,17 @@ const createPaciente = async (req, res) => {
  */
 const getPacientes = async (req, res) => {
     try {
+        console.log("🔍 Obteniendo lista de pacientes...");
+        
         const pacientes = await pacientesModel.findAll({
             where: { activo: true },
             attributes: ['id', 'nombre', 'telefono', 'email', 'createdAt']
         });
         
+        console.log(`✅ Se encontraron ${pacientes.length} pacientes`);
         res.send({ data: pacientes });
     } catch (error) {
-        console.log("Error en getPacientes:", error);
+        console.log("❌ Error en getPacientes:", error.message);
         handleHttpError(res, "ERROR_GETTING_PACIENTES", 500);
     }
 };
