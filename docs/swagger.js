@@ -59,60 +59,61 @@ const swaggerDefinition = {
           },
         },
       },
-      track: {
-        type: "object",
-        required: ["name", "album", "cover", "artist", "duration", "mediaId"],
-        properties: {
-          name: {
-            type: "string",
-          },
-          album: {
-            type: "string",
-          },
-          cover: {
-            type: "string",
-          },
-          artist: {
-            type: "object",
-            properties: {
-              name: {
-                type: "string",
-              },
-              nickname: {
-                type: "string",
-              },
-              nationality: {
-                type: "string",
-              },
-            },
-          },
-          duration: {
-            type: "object",
-            properties: {
-              start: {
-                type: "integer",
-              },
-              end: {
-                type: "integer",
-              },
-            },
-          },
-          mediaId: {
-            type: "string",
-          },
-        },
-      },
-      storage: {
-        type: "object",
-        properties: {
-          url: {
-            type: "string",
-          },
-          filename: {
-            type: "string",
-          },
-        },
-      },
+      // Schemas desactivados temporalmente (tracks y storage)
+      // track: {
+      //   type: "object",
+      //   required: ["name", "album", "cover", "artist", "duration", "mediaId"],
+      //   properties: {
+      //     name: {
+      //       type: "string",
+      //     },
+      //     album: {
+      //       type: "string",
+      //     },
+      //     cover: {
+      //       type: "string",
+      //     },
+      //     artist: {
+      //       type: "object",
+      //       properties: {
+      //         name: {
+      //           type: "string",
+      //         },
+      //         nickname: {
+      //           type: "string",
+      //         },
+      //         nationality: {
+      //           type: "string",
+      //         },
+      //       },
+      //     },
+      //     duration: {
+      //       type: "object",
+      //       properties: {
+      //         start: {
+      //           type: "integer",
+      //         },
+      //         end: {
+      //           type: "integer",
+      //         },
+      //       },
+      //     },
+      //     mediaId: {
+      //       type: "string",
+      //     },
+      //   },
+      // },
+      // storage: {
+      //   type: "object",
+      //   properties: {
+      //     url: {
+      //       type: "string",
+      //     },
+      //     filename: {
+      //       type: "string",
+      //     },
+      //   },
+      // },
     },
   },
 };
