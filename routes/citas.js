@@ -11,6 +11,8 @@ const checkRol = require("../middleware/rol");
  *   post:
  *     summary: Crear una nueva cita médica
  *     tags: [Citas]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -73,6 +75,8 @@ router.post("/",authMiddleware,checkRol(["admin", "user"]), validatorCreateCita,
  *   get:
  *     summary: Obtener todas las citas
  *     tags: [Citas]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de citas obtenida exitosamente
@@ -85,6 +89,8 @@ router.get("/",authMiddleware,checkRol(["admin", "user"]), getCitas);
  *   get:
  *     summary: Obtener una cita por ID
  *     tags: [Citas]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -106,6 +112,8 @@ router.get("/:id",authMiddleware,checkRol(["admin", "user"]), validatorGetCita, 
  *   put:
  *     summary: Actualizar una cita
  *     tags: [Citas]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -141,6 +149,8 @@ router.put("/:id",authMiddleware,checkRol(["admin", "user"]), validatorUpdateCit
  *   delete:
  *     summary: Eliminar una cita (borrado lógico)
  *     tags: [Citas]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
