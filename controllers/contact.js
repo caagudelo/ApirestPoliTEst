@@ -13,17 +13,17 @@ const getContactInfo = (req, res) => {
         // Información de contacto del desarrollador
         const contactInfo = {
             developer: {
-                name: "Andrés Felipe",
+                name: "Camilo Andres Agudelo",
                 email: "andres18160@gmail.com",
                 github: "https://github.com/andres18160",
-                linkedin: "https://linkedin.com/in/andres-felipe", // Opcional: puedes agregar tu LinkedIn
-                portfolio: "https://andresfelipe.dev" // Opcional: tu sitio web personal
+                linkedin: "", // Opcional: puedes agregar tu LinkedIn
+                portfolio: "" // Opcional: tu sitio web personal
             },
             project: {
                 name: "API REST PoliTest",
                 version: "1.0.0",
                 description: "API REST para gestión de pacientes y citas médicas",
-                repository: "https://github.com/andres18160/ApirestPoliTEst",
+                repository: "",
                 documentation: `${process.env.PUBLIC_URL || 'http://localhost:3000'}/documentacion`
             },
             api: {
@@ -62,7 +62,7 @@ const getContactInfo = (req, res) => {
 const getDeveloperInfo = (req, res) => {
     try {
         const developerInfo = {
-            name: "Andrés Felipe",
+            name: "Camilo Andres Agudelo",
             email: "andres18160@gmail.com",
             github: "https://github.com/andres18160",
             message: "Desarrollador de esta API REST para gestión médica"
