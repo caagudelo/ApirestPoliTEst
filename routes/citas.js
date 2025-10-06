@@ -3,6 +3,7 @@ const router = express.Router();
 const { createCita, getCitas, getCita, updateCita, deleteCita } = require("../controllers/citas");
 const { validatorCreateCita, validatorGetCita, validatorUpdateCita } = require("../validators/citas");
 const authMiddleware = require("../middleware/session");
+const checkRol = require("../middleware/rol");
 
 /**
  * @swagger
@@ -64,7 +65,7 @@ const authMiddleware = require("../middleware/session");
  *       500:
  *         description: Error interno del servidor
  */
-router.post("/",authMiddleware, validatorCreateCita, createCita);
+router.post("/",authMiddleware,checkRol(["admin", "user"]), validatorCreateCita, createCita);
 
 /**
  * @swagger
@@ -76,7 +77,7 @@ router.post("/",authMiddleware, validatorCreateCita, createCita);
  *       200:
  *         description: Lista de citas obtenida exitosamente
  */
-router.get("/",authMiddleware, getCitas);
+router.get("/",authMiddleware,checkRol(["admin", "user"]), getCitas);
 
 /**
  * @swagger
@@ -97,7 +98,7 @@ router.get("/",authMiddleware, getCitas);
  *       404:
  *         description: Cita no encontrada
  */
-router.get("/:id",authMiddleware, validatorGetCita, getCita);
+router.get("/:id",authMiddleware,checkRol(["admin", "user"]), validatorGetCita, getCita);
 
 /**
  * @swagger
@@ -132,7 +133,7 @@ router.get("/:id",authMiddleware, validatorGetCita, getCita);
  *       200:
  *         description: Cita actualizada exitosamente
  */
-router.put("/:id",authMiddleware, validatorUpdateCita, updateCita);
+router.put("/:id",authMiddleware,checkRol(["admin", "user"]), validatorUpdateCita, updateCita);
 
 /**
  * @swagger
@@ -151,6 +152,6 @@ router.put("/:id",authMiddleware, validatorUpdateCita, updateCita);
  *       200:
  *         description: Cita eliminada exitosamente
  */
-router.delete("/:id",authMiddleware, validatorGetCita, deleteCita);
+router.delete("/:id",authMiddleware,checkRol(["admin", "user"]), validatorGetCita, deleteCita);
 
 module.exports = router;
