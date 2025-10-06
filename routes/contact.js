@@ -38,7 +38,7 @@ const router = express.Router();
  *                       properties:
  *                         name:
  *                           type: string
- *                           example: "Andrés Felipe"
+ *                           example: "Camilo Andres Agudelo"
  *                         email:
  *                           type: string
  *                           example: "andres18160@gmail.com"
@@ -47,10 +47,10 @@ const router = express.Router();
  *                           example: "https://github.com/andres18160"
  *                         linkedin:
  *                           type: string
- *                           example: "https://linkedin.com/in/andres-felipe"
+ *                           example: "https://linkedin.com/in/xxxxx"
  *                         portfolio:
  *                           type: string
- *                           example: "https://andresfelipe.dev"
+ *                           example: "https://cagudelo.com"
  *                     project:
  *                       type: object
  *                       properties:
@@ -126,7 +126,7 @@ router.get("/", getContactInfoValidation, getContactInfo);
  *                   properties:
  *                     name:
  *                       type: string
- *                       example: "Andrés Felipe"
+ *                       example: "Camilo Andres Agudelo"
  *                     email:
  *                       type: string
  *                       example: "andres18160@gmail.com"
