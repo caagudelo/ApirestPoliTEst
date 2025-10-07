@@ -40,7 +40,10 @@ const createCita = async (req, res) => {
 const getCitas = async (req, res) => {
     try {
         // Usar el método nativo de la base de datos
-        const data = await citasModel.find({});
+        // Para Sequelize (MySQL) usamos findAll, para Mongoose (NoSQL) usamos find
+        const data = await citasModel.findAll ? 
+            await citasModel.findAll({}) : 
+            await citasModel.find({});
         res.send({ data });
     } catch (e) {
         handleHttpError(res, "ERROR_EN_GET_CITAS: " + e);
@@ -57,7 +60,10 @@ const getCita = async (req, res) => {
         req = matchedData(req);
         const { id } = req;
         // Usar el método nativo de la base de datos
-        const data = await citasModel.findById(id);
+        // Para Sequelize (MySQL) usamos findByPk, para Mongoose (NoSQL) usamos findById
+        const data = await citasModel.findByPk ? 
+            await citasModel.findByPk(id) : 
+            await citasModel.findById(id);
         res.send({ data });
     } catch (e) {
         handleHttpError(res, "ERROR_EN_GET_CITA: " + e);
@@ -73,10 +79,18 @@ const updateCita = async (req, res) => {
     try {
         const { id, ...body } = matchedData(req);
         // Usar el método nativo de la base de datos
-        const data = await citasModel.findByIdAndUpdate(
-            id, body,
-            { new: true } // Retorna el documento actualizado
-        );
+        let data;
+        if (citasModel.update) {
+            // Para Sequelize (MySQL)
+            await citasModel.update(body, { where: { id: id } });
+            data = await citasModel.findByPk(id);
+        } else {
+            // Para Mongoose (NoSQL)
+            data = await citasModel.findByIdAndUpdate(
+                id, body,
+                { new: true } // Retorna el documento actualizado
+            );
+        }
         res.send({ data });
     } catch (e) {
         handleHttpError(res, "ERROR_EN_UPDATE_CITA: " + e);
@@ -93,11 +107,19 @@ const deleteCita = async (req, res) => {
         req = matchedData(req);
         const { id } = req;
         // Usar el método nativo para borrado lógico
-        const data = await citasModel.findByIdAndUpdate(
-            id, 
-            { estado: "cancelada" },
-            { new: true }
-        );
+        let data;
+        if (citasModel.update) {
+            // Para Sequelize (MySQL)
+            await citasModel.update({ estado: "cancelada" }, { where: { id: id } });
+            data = await citasModel.findByPk(id);
+        } else {
+            // Para Mongoose (NoSQL)
+            data = await citasModel.findByIdAndUpdate(
+                id, 
+                { estado: "cancelada" },
+                { new: true }
+            );
+        }
         res.send({ data });
     } catch (e) {
         console.log(e);
