@@ -37,29 +37,7 @@ const Citas = sequelize.define("citas", {
     tableName: "citas"
 });
 
-// Método para crear una nueva cita
-Citas.create = function(data) {
-    return this.create(data);
-};
-
-// Método para encontrar todas las citas
-Citas.findAllData = function(query) {
-    return this.findAll({ where: query });
-};
-
-// Método para encontrar una cita por ID
-Citas.findOneData = function(id) {
-    return this.findByPk(id);
-};
-
-// Método para actualizar una cita
-Citas.findByIdAndUpdate = function(id, data, options) {
-    return this.update(data, { where: { id: id } });
-};
-
-// Método para eliminar una cita (borrado lógico)
-Citas.delete = function(query) {
-    return this.update({ estado: "cancelada" }, { where: { id: query.id } });
-};
+// Los métodos create, findAll, findByPk, etc. ya están disponibles nativamente en Sequelize
+// No necesitamos redefinirlos ya que causan recursión infinita
 
 module.exports = Citas;

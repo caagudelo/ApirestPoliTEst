@@ -39,7 +39,8 @@ const createCita = async (req, res) => {
  */
 const getCitas = async (req, res) => {
     try {
-        const data = await citasModel.findAllData({});
+        // Usar el método nativo de la base de datos
+        const data = await citasModel.find({});
         res.send({ data });
     } catch (e) {
         handleHttpError(res, "ERROR_EN_GET_CITAS: " + e);
@@ -55,7 +56,8 @@ const getCita = async (req, res) => {
     try {
         req = matchedData(req);
         const { id } = req;
-        const data = await citasModel.findOneData(id);
+        // Usar el método nativo de la base de datos
+        const data = await citasModel.findById(id);
         res.send({ data });
     } catch (e) {
         handleHttpError(res, "ERROR_EN_GET_CITA: " + e);
@@ -70,9 +72,10 @@ const getCita = async (req, res) => {
 const updateCita = async (req, res) => {
     try {
         const { id, ...body } = matchedData(req);
+        // Usar el método nativo de la base de datos
         const data = await citasModel.findByIdAndUpdate(
             id, body,
-            { update: true }
+            { new: true } // Retorna el documento actualizado
         );
         res.send({ data });
     } catch (e) {
@@ -89,7 +92,12 @@ const deleteCita = async (req, res) => {
     try {
         req = matchedData(req);
         const { id } = req;
-        const data = await citasModel.delete({ _id: id });
+        // Usar el método nativo para borrado lógico
+        const data = await citasModel.findByIdAndUpdate(
+            id, 
+            { estado: "cancelada" },
+            { new: true }
+        );
         res.send({ data });
     } catch (e) {
         console.log(e);

@@ -30,29 +30,7 @@ const citasSchema = new Schema({
     timestamps: true // Agrega createdAt y updatedAt automáticamente
 });
 
-// Método para crear una nueva cita
-citasSchema.statics.create = function(data) {
-    return this.create(data);
-};
-
-// Método para encontrar todas las citas
-citasSchema.statics.findAllData = function(query) {
-    return this.find(query);
-};
-
-// Método para encontrar una cita por ID
-citasSchema.statics.findOneData = function(id) {
-    return this.findById(id);
-};
-
-// Método para actualizar una cita
-citasSchema.statics.findByIdAndUpdate = function(id, data, options) {
-    return this.findByIdAndUpdate(id, data, options);
-};
-
-// Método para eliminar una cita (borrado lógico)
-citasSchema.statics.delete = function(query) {
-    return this.findByIdAndUpdate(query._id, { estado: "cancelada" });
-};
+// Los métodos create, find, findById, etc. ya están disponibles nativamente en Mongoose
+// No necesitamos redefinirlos ya que causan recursión infinita
 
 module.exports = model("citas", citasSchema);
