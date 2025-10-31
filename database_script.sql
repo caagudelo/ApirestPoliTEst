@@ -50,10 +50,10 @@ CREATE TABLE IF NOT EXISTS `citas` (
 -- DATOS DE EJEMPLO (OPCIONAL)
 -- =====================================================
 
--- Insertar un usuario administrador de ejemplo
+-- Insertar un usuario administrador de ejemplo password: '123456789'
 INSERT INTO `users` (`name`, `age`, `email`, `password`, `role`) VALUES 
-('Administrador', 30, 'admin@example.com', '$2b$10$rQZ8k7X9Y2vL3mN4oP5qQe', 'admin'),
-('Usuario Prueba', 25, 'user@example.com', '$2b$10$rQZ8k7X9Y2vL3mN4oP5qQe', 'user');
+('Administrador', 30, 'admin@example.com', '$2a$10$wRBSApLwXjxktg34pMK0L.2EQHTxxE79YTi1z17uR7y1E9z5ocn6y', 'admin'),
+('Usuario Prueba', 25, 'user@example.com', '$2a$10$wRBSApLwXjxktg34pMK0L.2EQHTxxE79YTi1z17uR7y1E9z5ocn6y', 'user');
 
 -- Insertar algunas citas de ejemplo
 INSERT INTO `citas` (`paciente_id`, `fecha`, `hora`, `especialidad`, `estado`) VALUES 

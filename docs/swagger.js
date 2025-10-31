@@ -7,27 +7,43 @@ const PUBLIC_URL = process.env.PUBLIC_URL;
  * API Config Info
  */
 
+// Normaliza la URL pública si está definida (agrega http:// si falta y elimina slash final)
+const normalizePublicUrl = (raw) => {
+  if (!raw) return null;
+  let url = raw.trim();
+  if (!/^https?:\/\//i.test(url)) {
+    url = `http://${url}`; // añade esquema por defecto
+  }
+  // quita slash final para construir rutas limpias
+  url = url.replace(/\/$/, "");
+  return url;
+};
+
+const effectivePublicUrl = normalizePublicUrl(PUBLIC_URL);
+
+
+// Si se define PUBLIC_URL se usará absoluta.
+const servers = effectivePublicUrl
+  ? [{ url: `${effectivePublicUrl}/api` }]
+  : [{ url: '/api' }];
+
 const swaggerDefinition = {
   openapi: "3.0.0",
   info: {
     title: "Documentacion de mi API Trabajo poli",
     version: "1.0.0",
-    description: "API REST para proyecto Arquitectura poli",
+    description: "API REST para proyecto poli",
     contact: {
       name: "Camilo Andres Agudelo",
       email: "andres18160@gmail.com",
-      url: "https://www.cagudelo.com" // Tu URL personal
+      url: "https://www.cagudelo.com"
     },
     license: {
       name: "MIT",
       url: "https://opensource.org/licenses/MIT"
     }
   },
-  servers: [
-    {
-      url: `${PUBLIC_URL || 'http://localhost:3000'}/api`,
-    }
-  ],
+  servers,
   components: {
     securitySchemes:{
         bearerAuth:{
