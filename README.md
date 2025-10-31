@@ -54,6 +54,86 @@ Para ejecutar este proyecto, deberá agregar las siguientes variables de entorno
 
 `MYSQL_PASSWORD`
 
+## Ejecutar con Docker (MySQL + API)
+
+### Requisitos
+
+- Docker y Docker Compose instalados
+- Copiar el archivo `.env.example` a `.env` y ajustar valores sensibles (contraseñas, JWT, etc.)
+
+### Pasos rápidos (PowerShell)
+
+```powershell
+# 1. Clonar el repositorio (si no lo tienes)
+git clone https://github.com/caagudelo/ApirestPoliTEst.git
+cd ApirestPoliTEst
+
+# 2. Crear archivo .env basado en .env.example
+Copy-Item .env.example .env
+notepad .env  # Ajusta valores si deseas
+
+# 3. Levantar servicios (API + MySQL)
+docker compose up -d --build
+
+# 4. Ver logs de la API
+docker compose logs -f api
+
+# 5. Parar servicios
+docker compose down
+```
+
+### Estructura de servicios
+
+- `api`: Contenedor Node.js con la API (puerto 3211 interno)
+- `mysql`: Base de datos MySQL 8 inicializada con el script `database_script.sql`
+
+### Datos iniciales
+
+El archivo `database_script.sql` se monta en el contenedor MySQL y se ejecuta automáticamente al crear el volumen por primera vez. Incluye tablas, algunos inserts de ejemplo, vistas y procedimientos almacenados.
+
+### Variables relevantes para MySQL
+
+- `MYSQL_HOST=mysql` (nombre del servicio en la red interna Docker)
+- `MYSQL_PORT=3306`
+- `MYSQL_DATABASE` Nombre de la base
+- `MYSQL_USER` Usuario de aplicación
+- `MYSQL_PASSWORD` Contraseña del usuario de aplicación
+- `MYSQL_ROOT_PASSWORD` Contraseña del usuario root (sólo en contenedor)
+
+### Cambiar el puerto expuesto
+
+Por defecto se expone el puerto externo igual al interno (`3211`). Puedes cambiarlo editando `docker-compose.yml`:
+
+```yaml
+ports:
+	- "8080:3211"
+```
+
+Luego reinicia:
+
+```powershell
+docker compose up -d --build
+```
+
+### Reconstruir sin usar cache
+```powershell
+docker compose build --no-cache
+docker compose up -d
+```
+
+### Limpiar volumen de datos MySQL (¡Destruye datos!)
+```powershell
+docker compose down -v
+docker compose up -d --build
+```
+
+### Healthcheck
+El servicio MySQL incluye un healthcheck para asegurar que la API sólo arranque cuando la base esté lista.
+
+### Notas
+Si usas también MongoDB, establece `ENGINE_DB=nosql` y asegúrate de que `DB_URI` apunte a tu instancia.
+
+
 
 ## Authors
 
