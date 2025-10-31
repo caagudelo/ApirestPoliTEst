@@ -12,7 +12,8 @@ const openApiConfigration = require("./docs/swagger")
 
 app.use(cors())
 app.use(express.json())
-app.use(express.static("storage"))//Configuracion de recursos publicos
+// Eliminado middleware de archivos estáticos de la carpeta 'storage' porque la funcionalidad de almacenamiento fue removida.
+// Si necesitas servir otros recursos estáticos en el futuro, usa: app.use(express.static("public")) y crea una carpeta 'public'.
 
 
 
@@ -34,7 +35,7 @@ app.use('/documentacion',swaggerUI.serve,swaggerUI.setup(openApiConfigration))
  * Aqui invocamos a la ruta! 🫡
  */
 //TODO localhost/api/___
-app.use("/api",require("./routes"));//TODO hace referencia al index.js de la carpeta routes
+app.use("/api",require("./routes")); // Carga dinámicamente las rutas activas
 
 // Middleware de manejo de errores global
 app.use((error, req, res, next) => {

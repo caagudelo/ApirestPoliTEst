@@ -130,61 +130,7 @@ const swaggerDefinition = {
           }
         }
       },
-      // Schemas desactivados temporalmente (tracks y storage)
-      // track: {
-      //   type: "object",
-      //   required: ["name", "album", "cover", "artist", "duration", "mediaId"],
-      //   properties: {
-      //     name: {
-      //       type: "string",
-      //     },
-      //     album: {
-      //       type: "string",
-      //     },
-      //     cover: {
-      //       type: "string",
-      //     },
-      //     artist: {
-      //       type: "object",
-      //       properties: {
-      //         name: {
-      //           type: "string",
-      //         },
-      //         nickname: {
-      //           type: "string",
-      //         },
-      //         nationality: {
-      //           type: "string",
-      //         },
-      //       },
-      //     },
-      //     duration: {
-      //       type: "object",
-      //       properties: {
-      //         start: {
-      //           type: "integer",
-      //         },
-      //         end: {
-      //           type: "integer",
-      //         },
-      //       },
-      //     },
-      //     mediaId: {
-      //       type: "string",
-      //     },
-      //   },
-      // },
-      // storage: {
-      //   type: "object",
-      //   properties: {
-      //     url: {
-      //       type: "string",
-      //     },
-      //     filename: {
-      //       type: "string",
-      //     },
-      //   },
-      // },
+  // Eliminados schemas de 'track' y 'storage' por limpieza del proyecto.
     },
   },
 };
@@ -200,8 +146,8 @@ const getActiveRoutes = () => {
     return fileName.split('.').shift();
   };
   
-  // Lista de rutas desactivadas (debe coincidir con routes/index.js)
-  const DISABLED_ROUTES = ['tracks', 'storage'];
+  // Las rutas 'tracks' y 'storage' se eliminaron del código base.
+  const DISABLED_ROUTES = ['tracks', 'storage']; // Mantener por si existen archivos residuales físicos.
   
   return files
     .filter(file => {

@@ -12,11 +12,10 @@ const removeExtension = (fileName) =>{
 }
 
 fs.readdirSync(PATH_ROUTES).filter((file) =>{
-    const name = removeExtension(file)//TODO index, tracks
+    const name = removeExtension(file)
     if(name !== 'index'){
-        // Desactivar temporalmente las rutas de tracks y storage
+        // Se removieron completamente las rutas 'tracks' y 'storage' del proyecto.
         if(name === 'tracks' || name === 'storage'){
-            console.log("🚫 Ruta desactivada temporalmente:", name)
             return false
         }
         console.log("Cargando Ruta:",name)
