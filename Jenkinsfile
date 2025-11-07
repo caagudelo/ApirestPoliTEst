@@ -2,7 +2,6 @@ pipeline { // Declarativa: define el pipeline completo
   agent any // Usa cualquier nodo/ejecutor disponible
   options { // Opciones globales del pipeline
     timestamps() // Añade timestamp a cada línea del log
-    ansiColor('xterm') // Colorea salida ANSI para mejor legibilidad
     buildDiscarder(logRotator(numToKeepStr: '15')) // Conserva solo los últimos 15 builds
     disableConcurrentBuilds() // Evita builds simultáneos del mismo job
   }
@@ -30,6 +29,8 @@ pipeline { // Declarativa: define el pipeline completo
       steps {
         script {
           echo 'Generando archivo .env para docker compose y la app'
+          // Nota: Para habilitar colores ANSI instala el plugin "AnsiColor" en Jenkins
+          // y usa dentro de steps: ansiColor('xterm'){ /* comandos */ }
           def envContent = """
 PORT=${env.APP_PORT}
 ENGINE_DB=${env.ENGINE_DB}
