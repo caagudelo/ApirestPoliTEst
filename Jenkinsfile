@@ -29,6 +29,21 @@ pipeline { // Declarativa: define el pipeline completo
     pollSCM('@daily') // Revisa cambios en Git una vez al día si no hay webhooks
   }
   stages { // Lista de etapas secuenciales
+    stage('Docker Diagnostics') {
+      when { expression { return env.USE_DOCKER == 'true' } }
+      steps {
+        script {
+          ansiColor('xterm') {
+            sh 'echo "== Docker version =="'
+            sh 'docker version || echo "(docker version fallo)"'
+            sh 'echo "== Docker info (resumido)=="'
+            sh 'docker info --format "Plugins: {{ .Plugins.Volume }}" || true'
+            sh 'echo "== Imágenes existentes =="'
+            sh 'docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | head -n 15 || true'
+          }
+        }
+      }
+    }
     stage('Generate .env') { // Generar archivo .env desde variables de entorno Jenkins
       steps {
         script {
@@ -124,7 +139,7 @@ PUBLIC_URL=${env.PUBLIC_URL}
       }
     }
     stage('Build Docker Image') { // Construcción de la imagen Docker local
-      when { allOf { branch 'main'; expression { return env.USE_DOCKER == 'true' && sh(script: 'which docker >/dev/null 2>&1', returnStatus: true) == 0 } } }
+      when { allOf { branch 'main'; expression { return env.USE_DOCKER == 'true' } } }
       steps {
         script { // Bloque script para lógica Groovy
           def tag = env.BUILD_NUMBER // Usa número de build como tag único
@@ -136,11 +151,15 @@ PUBLIC_URL=${env.PUBLIC_URL}
       }
     }
     stage('Deploy (Docker Compose)') { // Despliegue usando docker compose local
-      when { allOf { branch 'main'; expression { return env.USE_DOCKER == 'true' && sh(script: 'which docker >/dev/null 2>&1', returnStatus: true) == 0 } } }
+      when { allOf { branch 'main'; expression { return env.USE_DOCKER == 'true' } } }
       steps {
         ansiColor('xterm') {
           sh 'docker compose down || true' // Detiene y elimina servicios previos si existen (ignora error)
           sh 'docker compose up -d --build' // Levanta servicios en segundo plano reconstruyendo si es necesario
+          sh 'echo "== Estado contenedores =="'
+          sh 'docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"'
+          sh 'echo "Logs API (últimas 50 líneas)"'
+          sh 'docker logs --tail 50 apirestpolitest_api || true'
         }
       }
     }
