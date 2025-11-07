@@ -108,7 +108,6 @@ pipeline { // Declarativa: define el pipeline completo
       }
     }
     stage('Security Audit') { // Auditoría de vulnerabilidades npm
-      when { branch 'main' } // Solo en la rama main
       steps {
         script {
           ansiColor('xterm') {
