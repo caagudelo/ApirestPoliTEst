@@ -9,7 +9,6 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - .:/app
       - /app/node_modules
     networks:
       - apirest_net
