@@ -1,0 +1,59 @@
+# Lista de plugins para Jenkins (formato: pluginID:version opcional)
+# Mantener versiones explícitas ayuda a reproducibilidad; se puede dejar sin versión para latest.
+
+# Core pipeline y utilidades
+workflow-aggregator
+workflow-basic-steps
+workflow-cps
+workflow-durable-task-step
+workflow-job
+workflow-multibranch
+workflow-scm-step
+pipeline-groovy-lib
+pipeline-utility-steps
+
+# Gestión de credenciales y seguridad
+credentials
+credentials-binding
+plain-credentials
+ssh-credentials
+
+# SCM
+git
+github
+github-branch-source
+
+# UI / Experiencia
+blueocean
+blueocean-core-js
+blueocean-dashboard
+blueocean-pipeline-editor
+blueocean-git-pipeline
+blueocean-github-pipeline
+blueocean-display-url
+
+# AnsiColor para logs con color
+ansicolor
+
+# Notificaciones / Integraciones
+slack
+
+# Docker / Contenedores
+docker-workflow
+docker-plugin
+
+# Config as Code (opcional, para gestionar configuración)
+configuration-as-code
+
+# Calidad / Sonar (opcional si usas SonarQube)
+sonar
+
+# Auditoría / Matrices (opcional)
+matrix-auth
+
+# Otros útiles
+metrics
+warnings-ng
+
+# Si necesitas nodejs plugin para instalar herramientas Node en Jenkins master
+nodejs
