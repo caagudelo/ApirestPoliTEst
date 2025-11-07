@@ -139,7 +139,6 @@ PUBLIC_URL=${env.PUBLIC_URL}
       }
     }
     stage('Build Docker Image') { // Construcción de la imagen Docker local
-      when { branch 'main' }
       steps {
         script { // Bloque script para lógica Groovy
           def tag = env.BUILD_NUMBER // Usa número de build como tag único
@@ -151,7 +150,6 @@ PUBLIC_URL=${env.PUBLIC_URL}
       }
     }
     stage('Deploy (Docker Compose)') { // Despliegue usando docker compose local
-      when { branch 'main' }
       steps {
         ansiColor('xterm') {
           sh 'docker compose down || true' // Detiene y elimina servicios previos si existen (ignora error)
