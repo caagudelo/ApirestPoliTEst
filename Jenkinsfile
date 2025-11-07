@@ -1,3 +1,6 @@
+// Jenkinsfile
+// Buenas prácticas AnsiColor: plugin debe estar instalado. Se usa sólo como wrapper en steps.
+// Para desactivar colores basta con remover los bloques ansiColor o condicionar con: if (env.ANSICOLOR != 'false') { ansiColor('xterm'){ ... } }
 pipeline { // Declarativa: define el pipeline completo
   agent any // Usa cualquier nodo/ejecutor disponible
   options { // Opciones globales del pipeline
@@ -56,28 +59,36 @@ PUBLIC_URL=${env.PUBLIC_URL}
     stage('Node Setup') { // Preparar entorno Node y dependencias
       agent { docker { image "node:${NODE_VERSION}-alpine" } } // Ejecuta esta stage dentro de un contenedor Node Alpine
       steps {
-        sh 'node -v' // Muestra versión de Node para trazabilidad
-        sh 'npm ci || npm install' // Instala dependencias: ci si hay lock, si falla usa install
+        ansiColor('xterm') {
+          sh 'node -v' // Muestra versión de Node para trazabilidad
+          sh 'npm ci || npm install' // Instala dependencias: ci si hay lock, si falla usa install
+        }
       }
     }
     stage('Lint') { // Revisión estática de código
       agent { docker { image "node:${NODE_VERSION}-alpine" } } // Usa el mismo contenedor Node
       steps {
-        sh 'npm run lint' // Ejecuta ESLint según script definido
+        ansiColor('xterm') {
+          sh 'npm run lint' // Ejecuta ESLint según script definido
+        }
       }
     }
     stage('Security Audit') { // Auditoría de vulnerabilidades npm
       when { branch 'main' } // Solo en la rama main
       agent { docker { image "node:${NODE_VERSION}-alpine" } } // Contenedor Node
       steps {
-        sh 'npm run audit' // Lanza npm audit con nivel configurado
+        ansiColor('xterm') {
+          sh 'npm run audit' // Lanza npm audit con nivel configurado
+        }
       }
     }
     stage('Unit Tests') { // Ejecución de tests (si existen)
       when { expression { return fileExists('test') } } // Condición: carpeta test presente
       agent { docker { image "node:${NODE_VERSION}-alpine" } } // Contenedor Node
       steps {
-        sh 'npm test' // Ejecuta script de pruebas definido en package.json
+        ansiColor('xterm') {
+          sh 'npm test' // Ejecuta script de pruebas definido en package.json
+        }
       }
     }
     stage('Build Docker Image') { // Construcción de la imagen Docker local
@@ -85,25 +96,29 @@ PUBLIC_URL=${env.PUBLIC_URL}
       steps {
         script { // Bloque script para lógica Groovy
           def tag = env.BUILD_NUMBER // Usa número de build como tag único
-          sh "docker build -t ${DOCKER_IMAGE}:${tag} ." // Construye imagen con tag incremental
-          sh "docker tag ${DOCKER_IMAGE}:${tag} ${DOCKER_IMAGE}:latest" // Actualiza etiqueta latest
+          ansiColor('xterm') {
+            sh "docker build -t ${DOCKER_IMAGE}:${tag} ." // Construye imagen con tag incremental
+            sh "docker tag ${DOCKER_IMAGE}:${tag} ${DOCKER_IMAGE}:latest" // Actualiza etiqueta latest
+          }
         }
       }
     }
     stage('Deploy (Docker Compose)') { // Despliegue usando docker compose local
       when { branch 'main' } // Solo en main
       steps {
-        sh 'docker compose down || true' // Detiene y elimina servicios previos si existen (ignora error)
-        sh 'docker compose up -d --build' // Levanta servicios en segundo plano reconstruyendo si es necesario
+        ansiColor('xterm') {
+          sh 'docker compose down || true' // Detiene y elimina servicios previos si existen (ignora error)
+          sh 'docker compose up -d --build' // Levanta servicios en segundo plano reconstruyendo si es necesario
+        }
       }
     }
   }
   post { // Acciones finales según resultado
     success { // Si el pipeline termina correctamente
-      echo 'Build OK' // Mensaje simple de éxito
+      ansiColor('xterm') { echo "\u001B[32mBuild OK\u001B[0m" } // Mensaje éxito verde
     }
     failure { // Si alguna stage falla
-      echo 'Build Failed' // Mensaje simple de fallo
+      ansiColor('xterm') { echo "\u001B[31mBuild Failed\u001B[0m" } // Mensaje fallo rojo
     }
   }
 }
