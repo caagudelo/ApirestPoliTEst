@@ -1,4 +1,3 @@
-
 <div align="center">
 
 # API REST Clínica (Node.js + MySQL/MongoDB)
@@ -296,5 +295,63 @@ Requiere MySQL o MongoDB corriendo localmente. Ajusta `.env` en consecuencia.
 
 ## 👤 Autor
 Camilo Andrés Agudelo
+
+## ⚙️ Integración y CI/CD con Jenkins
+
+Este proyecto incluye integración continua y despliegue automatizado usando Jenkins y Docker.
+
+### Instalación de Jenkins con Docker Compose
+
+Para levantar Jenkins en modo local y permitir builds automáticos, usa el archivo `docker-compose.jenkins.yml`:
+
+```bash
+# Levanta Jenkins y expone los puertos 8080 (web) y 50000 (agente)
+docker compose -f docker-compose.jenkins.yml up -d
+```
+Esto crea un contenedor Jenkins persistente con acceso al socket Docker del host, permitiendo que los pipelines construyan y desplieguen imágenes y servicios.
+
+- El volumen `jenkins_home` guarda la configuración y los jobs.
+- El socket `/var/run/docker.sock` permite a Jenkins controlar Docker directamente.
+
+Accede a Jenkins en [http://localhost:8080](http://localhost:8080) y sigue el asistente de configuración inicial.
+
+### Instalación de Docker y Docker Compose dentro del contenedor Jenkins
+
+Después de levantar Jenkins con Docker Compose, es necesario instalar Docker y Docker Compose dentro del propio contenedor Jenkins para que los pipelines puedan ejecutar comandos Docker:
+
+1. Ingresa al contenedor Jenkins por bash:
+   ```bash
+   docker exec -it ci_jenkins bash
+   ```
+2. Ejecuta los siguientes comandos para instalar Docker y Docker Compose:
+   ```bash
+   apt-get update && apt-get install -y docker.io docker-compose
+   ```
+
+Esto habilita el uso de comandos `docker` y `docker-compose` desde los pipelines declarados en el Jenkinsfile.
+
+### ¿Qué hace el Jenkinsfile?
+
+El archivo `Jenkinsfile` define el pipeline declarativo para CI/CD:
+
+- **Docker Diagnostics:** Verifica la versión y estado de Docker antes de iniciar el build.
+- **Generate .env:** Genera el archivo `.env` con las variables necesarias para la app y la base de datos.
+- **Checkout:** Clona el repositorio y actualiza el workspace.
+- **Node Setup:** Instala dependencias Node.js en un contenedor limpio.
+- **Lint:** Ejecuta ESLint para validar la calidad del código.
+- **Security Audit:** Corre auditoría de dependencias npm.
+- **Unit Tests:** Ejecuta pruebas unitarias si existen.
+- **Build Docker Image:** Construye la imagen Docker de la API y la etiqueta con el número de build y como `latest`.
+- **Deploy (Docker Compose):** Levanta los servicios definidos en `docker-compose.yml` (API y MySQL), muestra el estado de los contenedores y los últimos logs de la API.
+
+#### Ejemplo de flujo automatizado:
+1. El pipeline se dispara por cambios en el repositorio o manualmente.
+2. Se valida el código y dependencias.
+3. Se construye y despliega la app en contenedores Docker.
+4. Se muestran logs y estado de los servicios para diagnóstico.
+
+Puedes personalizar el Jenkinsfile para agregar stages de test, despliegue a otros entornos, notificaciones, etc.
+
+---
 
 

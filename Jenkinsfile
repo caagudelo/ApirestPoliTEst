@@ -34,12 +34,11 @@ pipeline { // Declarativa: define el pipeline completo
       steps {
         script {
           ansiColor('xterm') {
-            sh 'echo "== Docker version =="'
+            echo "\u001B[36m========== [ Docker Diagnostics ] =========="'
             sh 'docker version || echo "(docker version fallo)"'
-            sh 'echo "== Docker info (resumido)=="'
             sh 'docker info --format "Plugins: {{ .Plugins.Volume }}" || true'
-            sh 'echo "== Imágenes existentes =="'
             sh 'docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | head -n 15 || true'
+            echo "\u001B[33m--------------------------------------------\u001B[0m"'
           }
         }
       }
@@ -47,7 +46,9 @@ pipeline { // Declarativa: define el pipeline completo
     stage('Generate .env') { // Generar archivo .env desde variables de entorno Jenkins
       steps {
         script {
-          echo 'Generando archivo .env para docker compose y la app'
+          ansiColor('xterm') {
+            echo "\u001B[36m========== [ Generate .env ] =========="'
+            echo 'Generando archivo .env para docker compose y la app'
           // Nota: Para habilitar colores ANSI instala el plugin "AnsiColor" en Jenkins
           // y usa dentro de steps: ansiColor('xterm'){ /* comandos */ }
             def envContent = """
@@ -63,20 +64,27 @@ pipeline { // Declarativa: define el pipeline completo
   PUBLIC_URL=${env.PUBLIC_URL}
   """.stripIndent().trim() + "\n"
           writeFile file: '.env', text: envContent
-          echo 'Contenido .env (ocultando posibles secretos sensibles)'
-          echo envContent.replaceAll(/(JWT_SECRET|MYSQL_PASSWORD)=.*/, '$1=***')
+            echo 'Contenido .env (ocultando posibles secretos sensibles)'
+            echo envContent.replaceAll(/(JWT_SECRET|MYSQL_PASSWORD)=.*/, '$1=***')
+            echo "\u001B[33m--------------------------------------------\u001B[0m"'
+          }
         }
       }
     }
     stage('Checkout') { // Etapa de descarga de código
-      steps { // Pasos de la etapa
-        checkout scm // Clona/actualiza el repositorio configurado
+      steps {
+        ansiColor('xterm') {
+          echo "\u001B[36m========== [ Checkout ] =========="'
+          checkout scm
+          echo "\u001B[33m--------------------------------------------\u001B[0m"'
+        }
       }
     }
     stage('Node Setup') { // Preparar entorno Node y dependencias
       steps {
         script {
           ansiColor('xterm') {
+            echo "\u001B[36m========== [ Node Setup ] =========="'
             if (env.USE_DOCKER == 'true') {
               echo 'Usando contenedor node para instalar dependencias'
               docker.image("node:${NODE_VERSION}-alpine").inside {
@@ -88,6 +96,7 @@ pipeline { // Declarativa: define el pipeline completo
               sh 'node -v || echo "Node no encontrado. Instala Node o habilita USE_DOCKER=true"'
               sh 'npm ci || npm install || echo "Instalación npm falló (verifica Node/npm en el agente)"'
             }
+            echo "\u001B[33m--------------------------------------------\u001B[0m"'
           }
         }
       }
@@ -96,6 +105,7 @@ pipeline { // Declarativa: define el pipeline completo
       steps {
         script {
           ansiColor('xterm') {
+            echo "\u001B[36m========== [ Lint ] =========="'
             if (env.USE_DOCKER == 'true') {
               docker.image("node:${NODE_VERSION}-alpine").inside {
                 sh 'npm run lint'
@@ -103,6 +113,7 @@ pipeline { // Declarativa: define el pipeline completo
             } else {
               sh 'npm run lint'
             }
+            echo "\u001B[33m--------------------------------------------\u001B[0m"'
           }
         }
       }
@@ -111,6 +122,7 @@ pipeline { // Declarativa: define el pipeline completo
       steps {
         script {
           ansiColor('xterm') {
+            echo "\u001B[36m========== [ Security Audit ] =========="'
             if (env.USE_DOCKER == 'true') {
               docker.image("node:${NODE_VERSION}-alpine").inside {
                 sh 'npm run audit'
@@ -118,6 +130,7 @@ pipeline { // Declarativa: define el pipeline completo
             } else {
               sh 'npm run audit'
             }
+            echo "\u001B[33m--------------------------------------------\u001B[0m"'
           }
         }
       }
@@ -127,6 +140,7 @@ pipeline { // Declarativa: define el pipeline completo
       steps {
         script {
           ansiColor('xterm') {
+            echo "\u001B[36m========== [ Unit Tests ] =========="'
             if (env.USE_DOCKER == 'true') {
               docker.image("node:${NODE_VERSION}-alpine").inside {
                 sh 'npm test'
@@ -134,6 +148,7 @@ pipeline { // Declarativa: define el pipeline completo
             } else {
               sh 'npm test'
             }
+            echo "\u001B[33m--------------------------------------------\u001B[0m"'
           }
         }
       }
@@ -143,8 +158,10 @@ pipeline { // Declarativa: define el pipeline completo
         script { // Bloque script para lógica Groovy
           def tag = env.BUILD_NUMBER // Usa número de build como tag único
           ansiColor('xterm') {
-            sh "docker build -t ${DOCKER_IMAGE}:${tag} ." // Construye imagen con tag incremental
-            sh "docker tag ${DOCKER_IMAGE}:${tag} ${DOCKER_IMAGE}:latest" // Actualiza etiqueta latest
+            echo "\u001B[36m========== [ Build Docker Image ] =========="'
+            sh "docker build -t ${DOCKER_IMAGE}:${tag} ."
+            sh "docker tag ${DOCKER_IMAGE}:${tag} ${DOCKER_IMAGE}:latest"
+            echo "\u001B[33m--------------------------------------------\u001B[0m"'
           }
         }
       }
@@ -152,12 +169,14 @@ pipeline { // Declarativa: define el pipeline completo
     stage('Deploy (Docker Compose)') { // Despliegue usando docker compose local
       steps {
         ansiColor('xterm') {
-          sh 'docker compose down || true' // Detiene y elimina servicios previos si existen (ignora error)
-          sh 'docker compose up -d --build' // Levanta servicios en segundo plano reconstruyendo si es necesario
+          echo "\u001B[36m========== [ Deploy (Docker Compose) ] =========="'
+          sh 'docker compose down || true'
+          sh 'docker compose up -d --build'
           sh 'echo "== Estado contenedores =="'
           sh 'docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"'
           sh 'echo "Logs API (últimas 50 líneas)"'
           sh 'docker logs --tail 50 apirestpolitest_api || true'
+          echo "\u001B[33m--------------------------------------------\u001B[0m"'
         }
       }
     }
