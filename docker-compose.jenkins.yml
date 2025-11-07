@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  jenkins:
+    build: ./jenkins
+    container_name: politest_jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000" # JNLP agents
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    environment:
+      # Puedes sobreescribir JAVA_OPTS si quieres activar wizard
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
+
+volumes:
+  jenkins_home:

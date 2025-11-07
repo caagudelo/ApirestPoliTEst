@@ -3,23 +3,24 @@ FROM jenkins/jenkins:lts
 # Cambiar a root para instalar dependencias adicionales
 USER root
 
-# Instalar docker cli para poder hacer docker build dentro del contenedor (requiere socket montado)
+# Instalar Docker CLI oficial y utilidades necesarias
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    docker.io \
-    curl \
-    git \
-    lsb-release \
+    ca-certificates curl git gnupg lsb-release \
+  && install -m 0755 -d /etc/apt/keyrings \
+  && curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+  && chmod a+r /etc/apt/keyrings/docker.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends docker-ce-cli docker-buildx-plugin docker-compose-plugin \
+  && docker -v \
   && rm -rf /var/lib/apt/lists/*
 
 # Volver al usuario jenkins
 USER jenkins
 
-# Copiar archivo de plugins declarativo
+# Copiar lista de plugins y ejecutar instalación automática
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
-
-# Instalar plugins al arranque (Jenkins los copiará a /var/jenkins_home si no existen)
-RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
-
+RUN jenkins-plugin-cli --plugin-file /usr/share/jenkins/ref/plugins.txt
 # Exponer puertos por defecto Jenkins
 EXPOSE 8080 50000
 
