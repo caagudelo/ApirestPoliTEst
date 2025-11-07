@@ -1,18 +1,18 @@
 version: '3.8'
 services:
   jenkins:
-    build: ./jenkins
-    container_name: politest_jenkins
+    image: jenkins/jenkins:lts
+    container_name: ci_jenkins
+    user: root
     ports:
       - "8080:8080"
-      - "50000:50000" # JNLP agents
+      - "50000:50000" 
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
     environment:
-      # Puedes sobreescribir JAVA_OPTS si quieres activar wizard
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
+      - DOCKER_HOST=unix:///var/run/docker.sock
 
 volumes:
   jenkins_home:

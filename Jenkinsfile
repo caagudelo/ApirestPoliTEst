@@ -12,6 +12,7 @@ pipeline { // Declarativa: define el pipeline completo
     NODE_VERSION = '20' // Versión de Node a usar en contenedores
     APP_PORT = '3211' // Puerto donde corre la app (referencial)
     DOCKER_IMAGE = 'apirestpolitest' // Nombre base de la imagen Docker
+    USE_DOCKER = 'true' // Permite habilitar/deshabilitar uso de contenedores y comandos docker (poner 'false' si el nodo Jenkins no tiene docker)
     // Valores por defecto (pueden ser sobreescritos por credenciales en Jenkins)
     PORT = '3211' // Valor PORT directo del .env
     ENGINE_DB = 'mysql'
@@ -57,42 +58,73 @@ PUBLIC_URL=${env.PUBLIC_URL}
       }
     }
     stage('Node Setup') { // Preparar entorno Node y dependencias
-      agent { docker { image "node:${NODE_VERSION}-alpine" } } // Ejecuta esta stage dentro de un contenedor Node Alpine
       steps {
-        ansiColor('xterm') {
-          sh 'node -v' // Muestra versión de Node para trazabilidad
-          sh 'npm ci || npm install' // Instala dependencias: ci si hay lock, si falla usa install
+        script {
+          ansiColor('xterm') {
+            if (env.USE_DOCKER == 'true') {
+              echo 'Usando contenedor node para instalar dependencias'
+              docker.image("node:${NODE_VERSION}-alpine").inside {
+                sh 'node -v'
+                sh 'npm ci || npm install'
+              }
+            } else {
+              echo 'Modo fallback SIN docker: se espera que Node esté instalado en el agente'
+              sh 'node -v || echo "Node no encontrado. Instala Node o habilita USE_DOCKER=true"'
+              sh 'npm ci || npm install || echo "Instalación npm falló (verifica Node/npm en el agente)"'
+            }
+          }
         }
       }
     }
     stage('Lint') { // Revisión estática de código
-      agent { docker { image "node:${NODE_VERSION}-alpine" } } // Usa el mismo contenedor Node
       steps {
-        ansiColor('xterm') {
-          sh 'npm run lint' // Ejecuta ESLint según script definido
+        script {
+          ansiColor('xterm') {
+            if (env.USE_DOCKER == 'true') {
+              docker.image("node:${NODE_VERSION}-alpine").inside {
+                sh 'npm run lint'
+              }
+            } else {
+              sh 'npm run lint'
+            }
+          }
         }
       }
     }
     stage('Security Audit') { // Auditoría de vulnerabilidades npm
       when { branch 'main' } // Solo en la rama main
-      agent { docker { image "node:${NODE_VERSION}-alpine" } } // Contenedor Node
       steps {
-        ansiColor('xterm') {
-          sh 'npm run audit' // Lanza npm audit con nivel configurado
+        script {
+          ansiColor('xterm') {
+            if (env.USE_DOCKER == 'true') {
+              docker.image("node:${NODE_VERSION}-alpine").inside {
+                sh 'npm run audit'
+              }
+            } else {
+              sh 'npm run audit'
+            }
+          }
         }
       }
     }
     stage('Unit Tests') { // Ejecución de tests (si existen)
       when { expression { return fileExists('test') } } // Condición: carpeta test presente
-      agent { docker { image "node:${NODE_VERSION}-alpine" } } // Contenedor Node
       steps {
-        ansiColor('xterm') {
-          sh 'npm test' // Ejecuta script de pruebas definido en package.json
+        script {
+          ansiColor('xterm') {
+            if (env.USE_DOCKER == 'true') {
+              docker.image("node:${NODE_VERSION}-alpine").inside {
+                sh 'npm test'
+              }
+            } else {
+              sh 'npm test'
+            }
+          }
         }
       }
     }
     stage('Build Docker Image') { // Construcción de la imagen Docker local
-      when { branch 'main' } // Solo en main
+      when { allOf { branch 'main'; expression { return env.USE_DOCKER == 'true' && sh(script: 'which docker >/dev/null 2>&1', returnStatus: true) == 0 } } }
       steps {
         script { // Bloque script para lógica Groovy
           def tag = env.BUILD_NUMBER // Usa número de build como tag único
@@ -104,7 +136,7 @@ PUBLIC_URL=${env.PUBLIC_URL}
       }
     }
     stage('Deploy (Docker Compose)') { // Despliegue usando docker compose local
-      when { branch 'main' } // Solo en main
+      when { allOf { branch 'main'; expression { return env.USE_DOCKER == 'true' && sh(script: 'which docker >/dev/null 2>&1', returnStatus: true) == 0 } } }
       steps {
         ansiColor('xterm') {
           sh 'docker compose down || true' // Detiene y elimina servicios previos si existen (ignora error)
