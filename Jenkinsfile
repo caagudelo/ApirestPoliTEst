@@ -50,17 +50,18 @@ pipeline { // Declarativa: define el pipeline completo
           echo 'Generando archivo .env para docker compose y la app'
           // Nota: Para habilitar colores ANSI instala el plugin "AnsiColor" en Jenkins
           // y usa dentro de steps: ansiColor('xterm'){ /* comandos */ }
-          def envContent = """
-PORT=${env.APP_PORT}
-ENGINE_DB=${env.ENGINE_DB}
-MYSQL_DATABASE=${env.MYSQL_DATABASE}
-MYSQL_USER=${env.MYSQL_USER}
-MYSQL_PASSWORD=${env.MYSQL_PASSWORD}
-MYSQL_HOST=${env.MYSQL_HOST}
-JWT_SECRET=${env.JWT_SECRET}
-DB_URI=${env.DB_URI}
-PUBLIC_URL=${env.PUBLIC_URL}
-""".stripIndent().trim() + "\n"
+            def envContent = """
+  PORT=${env.APP_PORT}
+  ENGINE_DB=${env.ENGINE_DB}
+  MYSQL_DATABASE=${env.MYSQL_DATABASE}
+  MYSQL_USER=${env.MYSQL_USER}
+  MYSQL_PASSWORD=${env.MYSQL_PASSWORD}
+  MYSQL_ROOT_PASSWORD=${env.MYSQL_PASSWORD}
+  MYSQL_HOST=${env.MYSQL_HOST}
+  JWT_SECRET=${env.JWT_SECRET}
+  DB_URI=${env.DB_URI}
+  PUBLIC_URL=${env.PUBLIC_URL}
+  """.stripIndent().trim() + "\n"
           writeFile file: '.env', text: envContent
           echo 'Contenido .env (ocultando posibles secretos sensibles)'
           echo envContent.replaceAll(/(JWT_SECRET|MYSQL_PASSWORD)=.*/, '$1=***')
