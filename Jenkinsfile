@@ -154,6 +154,8 @@ pipeline { // Declarativa: define el pipeline completo
             }
           }
         }
+        // Publicar el reporte HTML de cobertura en Jenkins (requiere plugin HTML Publisher)
+        publishHTML([reportDir: 'coverage/lcov-report', reportFiles: 'index.html', reportName: 'Coverage Report'])
       }
     }
     stage('Build Docker Image') { // Construcción de la imagen Docker local
