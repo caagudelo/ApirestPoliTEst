@@ -293,8 +293,6 @@ Requiere MySQL o MongoDB corriendo localmente. Ajusta `.env` en consecuencia.
 | start | Ejecuta producción (node app.js) |
 | dev | Desarrollo con recarga (nodemon) |
 
-## 👤 Autor
-Camilo Andrés Agudelo
 
 ## ⚙️ Integración y CI/CD con Jenkins
 
@@ -354,4 +352,6 @@ Puedes personalizar el Jenkinsfile para agregar stages de test, despliegue a otr
 
 ---
 
+## 👤 Autor
+Camilo Andrés Agudelo
 
