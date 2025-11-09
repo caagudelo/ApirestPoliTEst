@@ -61,6 +61,10 @@ const getContactInfo = (req, res) => {
  */
 const getDeveloperInfo = (req, res) => {
     try {
+        // Simular error si se envía un parámetro especial para pruebas
+        if (req.body && req.body.forceError) {
+            throw new Error('Simulated error');
+        }
         const developerInfo = {
             name: "Camilo Andres Agudelo",
             email: "andres18160@gmail.com",
@@ -77,7 +81,8 @@ const getDeveloperInfo = (req, res) => {
         console.error("Error al obtener información del desarrollador:", error);
         res.status(500).json({
             success: false,
-            message: "Error interno del servidor"
+            message: "Error interno del servidor",
+            error: error.message
         });
     }
 };

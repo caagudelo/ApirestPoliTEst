@@ -47,8 +47,5 @@ app.use((error, req, res, next) => {
     res.status(500).json({error: "Error interno del servidor"});
 });
 
-app.listen(port, () =>{
-    console.log('Tu app esta lista por http://localhost:'+port)
-});
 
-(ENGINE_DB === 'nosql') ? dbConnectNoSql() : dbConnectMySql();
+module.exports = app;

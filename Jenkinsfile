@@ -30,7 +30,7 @@ pipeline { // Declarativa: define el pipeline completo
   }
   stages { // Lista de etapas secuenciales
     stage('Docker Diagnostics') {
-      //when { expression { return env.USE_DOCKER == 'true' } }
+      when { expression { return env.USE_DOCKER == 'true' } }
       steps {
         script {
           ansiColor('xterm') {
@@ -133,6 +133,24 @@ pipeline { // Declarativa: define el pipeline completo
               }
             } else {
               sh 'npm test'
+            }
+          }
+        }
+      }
+    }
+    stage('Coverage Report') {
+      when { expression { return fileExists('test') } }
+      steps {
+        script {
+          ansiColor('xterm') {
+            if (env.USE_DOCKER == 'true') {
+              docker.image("node:${NODE_VERSION}-alpine").inside {
+                sh 'npm run coverage'
+                sh 'cat coverage/lcov-report/index.html | head -n 20 || echo "Ver reporte completo en coverage/lcov-report/index.html"'
+              }
+            } else {
+              sh 'npm run coverage'
+              sh 'cat coverage/lcov-report/index.html | head -n 20 || echo "Ver reporte completo en coverage/lcov-report/index.html"'
             }
           }
         }
