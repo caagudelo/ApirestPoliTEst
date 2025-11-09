@@ -30,7 +30,7 @@ pipeline { // Declarativa: define el pipeline completo
   }
   stages { // Lista de etapas secuenciales
     stage('Docker Diagnostics') {
-      when { expression { return env.USE_DOCKER == 'true' } }
+      //when { expression { return env.USE_DOCKER == 'true' } }
       steps {
         script {
           ansiColor('xterm') {
