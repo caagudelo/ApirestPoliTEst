@@ -330,6 +330,7 @@ Esto habilita el uso de comandos `docker` y `docker-compose` desde los pipelines
 
 ### ¿Qué hace el Jenkinsfile?
 
+
 El archivo `Jenkinsfile` define el pipeline declarativo para CI/CD:
 
 - **Docker Diagnostics:** Verifica la versión y estado de Docker antes de iniciar el build.
@@ -339,14 +340,27 @@ El archivo `Jenkinsfile` define el pipeline declarativo para CI/CD:
 - **Lint:** Ejecuta ESLint para validar la calidad del código.
 - **Security Audit:** Corre auditoría de dependencias npm.
 - **Unit Tests:** Ejecuta pruebas unitarias si existen.
+- **Coverage Report:** Ejecuta pruebas con cobertura y publica el reporte HTML en Jenkins usando el plugin HTML Publisher. El reporte se encuentra en `coverage/lcov-report/index.html` y se publica automáticamente en la interfaz de Jenkins.
 - **Build Docker Image:** Construye la imagen Docker de la API y la etiqueta con el número de build y como `latest`.
 - **Deploy (Docker Compose):** Levanta los servicios definidos en `docker-compose.yml` (API y MySQL), muestra el estado de los contenedores y los últimos logs de la API.
 
+#### Buenas prácticas y detalles del Jenkinsfile
+- Uso de colores ANSI en los logs (requiere plugin AnsiColor).
+- Generación automática del archivo `.env` desde variables de entorno de Jenkins.
+- Publicación automática del reporte de cobertura con barras de progreso (requiere plugin HTML Publisher actualizado y configuración correcta en Jenkins).
+- Pipeline con stages secuenciales y control de concurrencia.
+- Despliegue automatizado usando Docker Compose.
+- Conserva sólo los últimos 15 builds para ahorrar espacio.
+- Triggers automáticos diarios (`pollSCM('@daily')`).
+- Mensajes de éxito/fallo en colores.
+
 #### Ejemplo de flujo automatizado:
+
 1. El pipeline se dispara por cambios en el repositorio o manualmente.
 2. Se valida el código y dependencias.
-3. Se construye y despliega la app en contenedores Docker.
-4. Se muestran logs y estado de los servicios para diagnóstico.
+3. Se ejecutan pruebas y se publica el reporte de cobertura.
+4. Se construye y despliega la app en contenedores Docker.
+5. Se muestran logs y estado de los servicios para diagnóstico.
 
 Puedes personalizar el Jenkinsfile para agregar stages de test, despliegue a otros entornos, notificaciones, etc.
 
